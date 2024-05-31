@@ -1,8 +1,17 @@
 #include <cstdio>
 
+#include "drawing2d.h"
+
 #include <emscripten.h>
 #include <emscripten/emscripten.h>
 #include <emscripten/console.h>
+
+#include <emscripten/val.h>
+#include <emscripten/bind.h>
+
+#include <string>
+
+using emscripten::val;
 
 void HelloFoo();
 
@@ -11,21 +20,15 @@ EM_JS(void, two_alerts, (), {
   alert('bai');
 });
 
-extern "C" {
 
-EMSCRIPTEN_KEEPALIVE
-int addsq(int a, int b) {
+int AddSq(int a, int b) {
     return a*a + b*b;
 }
 
-EMSCRIPTEN_KEEPALIVE
-int pingIt() {
-  return 1;
+
+EMSCRIPTEN_BINDINGS(main_module) {
+  emscripten::function("addsq", &AddSq);
 }
-
-}
-
-
 
 
 int main(int argc, char* argv[]) {
