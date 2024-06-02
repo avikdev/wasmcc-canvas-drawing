@@ -1,0 +1,29 @@
+{
+	// Utility code completion snippets for C++ miro package.
+
+	"C++ Header": {
+		"scope": "cpp",
+		"prefix": "cl-h",
+		"description": "New class header template",
+		"body": [
+      "#pragma once\n",
+			"namespace miro {\n",
+      "class ${TM_FILENAME_BASE} {\n",
+      "public:\n",
+      "private:\n",
+      "};\n",
+			"}  // namespace miro\n"
+		],
+	},
+
+	"C++ Source": {
+		"scope": "cpp",
+		"prefix": "cl-s",
+		"description": "New class source template",
+		"body": [
+      "#include \"${TM_FILENAME_BASE}.h\"\n",
+			"namespace miro {\n",
+			"}  // namespace miro\n"
+		],
+	},
+}

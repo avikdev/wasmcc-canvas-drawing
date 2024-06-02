@@ -1,6 +1,5 @@
-#include <cstdio>
-
-#include "drawing2d.h"
+#include "miro/studiowasm/jsportal.h"
+#include "miro/studiowasm/scene_module.h"
 
 #include <emscripten.h>
 #include <emscripten/emscripten.h>
@@ -13,27 +12,19 @@
 
 using emscripten::val;
 
-void HelloFoo();
-
-EM_JS(void, two_alerts, (), {
-  alert('hai');
-  alert('bai');
-});
-
-
-int AddSq(int a, int b) {
+int AddSquares(int a, int b) {
     return a*a + b*b;
 }
 
-
 EMSCRIPTEN_BINDINGS(main_module) {
-  emscripten::function("addsq", &AddSq);
+  emscripten::function("AddSquares", &AddSquares);
 }
 
+EMSCRIPTEN_BINDINGS(scene_module) {
+  miro::RegisterSceneModuleFunctions();
+}
 
 int main(int argc, char* argv[]) {
-  printf("Started main ...\n");
-  emscripten_console_log("In [emscripten_console_log] ...");
-  HelloFoo();
+  emscripten_console_log("In main [emscripten_console_log] ...");
   return 0;
 }

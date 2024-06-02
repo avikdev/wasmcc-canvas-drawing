@@ -5,8 +5,13 @@ set(EMS_BASEDIR "/Users/avikpaul/github/emsdk/upstream/emscripten")
 
 set(CMAKE_TOOLCHAIN_FILE "${EMS_BASEDIR}/cmake/Modules/Platform/Emscripten.cmake")
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+set(CMAKE_BINARY_DIR "${CMAKE_CURRENT_LIST_DIR}/../dist")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../dist")
+set(CMAKE_BUILD_TYPE_INIT "Release")
+
 
 include_directories("${EMS_BASEDIR}/cache/sysroot/include")
+include_directories("${CMAKE_CURRENT_LIST_DIR}/miro-cpp")
 
 project(starter-wasm VERSION 1.0 LANGUAGES CXX)
 
@@ -14,17 +19,24 @@ project(starter-wasm VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../dist)
-set(CMAKE_BUILD_TYPE_INIT "Release")
+
+# Process Abseil's CMake build system
+add_subdirectory(abseil-cpp)
+add_subdirectory(miro-cpp/miro/sketch)
+add_subdirectory(miro-cpp/miro/studiowasm)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
     set(CMAKE_C_COMPILER "${EMS_BASEDIR}/emcc")
     set(CMAKE_CXX_COMPILER "${EMS_BASEDIR}/em++")
 endif ()
 
-add_executable(starter-wasm main.cc
-    hello.cc
-    drawing2d.h drawing2d.cc)
+add_executable(starter-wasm main.cc)
+
+target_link_libraries(
+    starter-wasm absl::flat_hash_set absl::strings
+    miro-sketch
+    miro-studiowasm)
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
         -s MODULARIZE=1 -s EXPORT_ES6=1 \

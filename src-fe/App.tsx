@@ -3,19 +3,24 @@ import './App.css';
 import WasmModule from "./wasm/starter-wasm.js";
 import { useRef } from "react";
 import CanvasPanel from './CanvasPanel.js';
+import WasmSetup, { WasmInterface } from './WasmSetup.js';
 
 let loadingStarted = false;
-
-interface WasmInterface {
-  addsq(a: number, b: number): number;
-  SetCanvas2DContext(ctx: CanvasRenderingContext2D): boolean;
-}
 
 let wasmModule: WasmInterface | null = null;
 
 function loadWasm() {
   if (loadingStarted) return;
   loadingStarted = true;
+
+  (globalThis as any).portalToCC = {
+    uuid: function() : string {
+      return "c98b-90ca-8821-09fe";
+    },
+    atob: function(arg: string) : string {
+      return window.atob(arg);
+    },
+  };
   window.setTimeout(async () => {
     const mod = await WasmModule();
     console.log(mod);
@@ -27,28 +32,39 @@ function loadWasm() {
 function App() {
   const [text, setText] = useState("-");
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  let wasmModule: WasmInterface | null = null;
 
   useEffect(() => {
-    loadWasm();
+    if (wasmModule) return;
+    const timeoutId = globalThis.setTimeout(async () => {
+      wasmModule = await WasmSetup.awaitModuleLoaded();
+      console.log(wasmModule);
+    }, 0);
+    return () => { globalThis.clearTimeout(timeoutId) };
   }, []);
 
   const onClickBtn = () => {
-    if (wasmModule === null) {
+    if (!wasmModule) {
       return;
     }
-    const result = wasmModule.addsq(3, 4);
+    const result = wasmModule.AddSquares(3, 4);
     setText(`addsq(3,4) := ${result}`);
 
-    console.log(canvasRef.current);
-    if (canvasRef.current !== null) {
-      const ctx = canvasRef.current.getContext("2d") as CanvasRenderingContext2D;
-      console.log(ctx);
-
-      ctx.fillStyle = "red";
-      ctx.fillRect(5, 5, 50, 70);
-      const setOk = wasmModule.SetCanvas2DContext(ctx);
-      console.log(setOk);
+    if (canvasRef.current === null) {
+      return
     }
+
+    const sceneId = wasmModule.miroStartNewScene();
+    console.log(`sceneId = ${sceneId}`);
+
+    wasmModule.miroFillCurrentScene(sceneId);
+
+    const ctx = canvasRef.current.getContext("2d") as CanvasRenderingContext2D;
+    console.log(ctx);
+    ctx.fillStyle = "red";
+    ctx.fillRect(5, 5, 50, 70);
+    const setOk = wasmModule.miroApplySceneToCanvas(sceneId, ctx);
+    console.log(setOk);
   };
 
   return (
