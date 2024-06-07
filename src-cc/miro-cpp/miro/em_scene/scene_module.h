@@ -2,6 +2,6 @@
 
 namespace miro {
 
-void RegisterSceneModuleFunctions();
+void RegisterSceneModuleExports();
 
 }  // namespace miro

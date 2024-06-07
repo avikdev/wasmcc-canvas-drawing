@@ -1,20 +1,35 @@
 #pragma once
 
-#include "miro/sketch/layerstack.h"
+#include <string>
+
+#include "miro/sketch/layer_stack.h"
+#include "miro/sketch/layer_element.h"
 
 namespace miro {
 
 class MiroScene {
 public:
-  MiroScene() = default;
+  explicit MiroScene(const std::string& id);
+
+  const std::string& id() const {
+    return id_;
+  }
 
   void FillDummy();
 
-  const std::vector<LayerStack>& stacks() const {
+  const std::vector<LayerStack>& layer_stacks() const {
     return stacks_;
   }
 
-private:
+  const std::vector<LayerStack>& layer_stacks() const {
+    return stacks_;
+  }
+
+  std::vector<LayerStack>* mutable_stacks() {
+    return &stacks_;
+  }
+
+  const std::string id_;
   std::vector<LayerStack> stacks_;
 };
 

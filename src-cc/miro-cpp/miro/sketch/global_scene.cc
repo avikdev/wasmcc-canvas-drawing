@@ -10,7 +10,7 @@ namespace {
 
 /* static */
 bool GlobalScene::StartNewScene(const std::string& uid) {
-  auto scene = std::make_unique<MiroScene>();
+  auto scene = std::make_unique<MiroScene>(uid);
   GlobalScene::GetInstance().ResetScene(uid, std::move(scene));
   return true;
 }

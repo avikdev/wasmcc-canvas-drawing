@@ -1,9 +1,9 @@
-#include "miro/studiowasm/scene_module.h"
+#include "miro/em_scene/scene_module.h"
 
 #include <emscripten/bind.h>
 
 #include "miro/sketch/global_scene.h"
-#include "miro/studiowasm/scene_renderer.h"
+#include "miro/em_scene/scene_renderer.h"
 #include "miro/studiowasm/util.h"
 #include "miro/studiowasm/canvas_2dcontext.h"
 
@@ -39,7 +39,7 @@ bool ApplySceneToCanvas(const std::string& uid, val context) {
 
 }  // namespace
 
-void RegisterSceneModuleFunctions() {
+void RegisterSceneModuleExports() {
   ::emscripten::function("miroStartNewScene", &StartNewScene);
   ::emscripten::function("miroFillCurrentScene", &FillCurrentScene);
   ::emscripten::function("miroApplySceneToCanvas", &ApplySceneToCanvas);

@@ -1,5 +1,6 @@
 #include "miro/studiowasm/jsportal.h"
-#include "miro/studiowasm/scene_module.h"
+#include "miro/em_scene/scene_module.h"
+#include "miro/studiowasm/studio_module.h"
 
 #include <emscripten.h>
 #include <emscripten/emscripten.h>
@@ -20,8 +21,12 @@ EMSCRIPTEN_BINDINGS(main_module) {
   emscripten::function("AddSquares", &AddSquares);
 }
 
-EMSCRIPTEN_BINDINGS(scene_module) {
-  miro::RegisterSceneModuleFunctions();
+//EMSCRIPTEN_BINDINGS(scene_module) {
+//  miro::RegisterSceneModuleExports();
+//}
+
+EMSCRIPTEN_BINDINGS(studio_module) {
+  miro::RegisterStudioModuleExports();
 }
 
 int main(int argc, char* argv[]) {

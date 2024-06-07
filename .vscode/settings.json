@@ -56,6 +56,14 @@
     "memory_resource": "cpp",
     "utility": "cpp",
     "cinttypes": "cpp",
-    "__locale": "cpp"
+    "__locale": "cpp",
+    "deque": "cpp",
+    "forward_list": "cpp",
+    "list": "cpp",
+    "valarray": "cpp",
+    "stack": "cpp",
+    "queue": "cpp",
+    "locale": "cpp",
+    "thread": "cpp"
   }
 }

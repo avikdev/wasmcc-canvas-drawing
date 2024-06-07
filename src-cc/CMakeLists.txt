@@ -23,6 +23,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Process Abseil's CMake build system
 add_subdirectory(abseil-cpp)
 add_subdirectory(miro-cpp/miro/sketch)
+add_subdirectory(miro-cpp/miro/em_scene)
 add_subdirectory(miro-cpp/miro/studiowasm)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
@@ -35,6 +36,7 @@ add_executable(starter-wasm main.cc)
 target_link_libraries(
     starter-wasm absl::flat_hash_set absl::strings
     miro-sketch
+    miro-emscene
     miro-studiowasm)
 
 

@@ -1,76 +1,48 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import WasmModule from "./wasm/starter-wasm.js";
 import { useRef } from "react";
 import CanvasPanel from './CanvasPanel.js';
 import WasmSetup, { WasmInterface } from './WasmSetup.js';
-
-let loadingStarted = false;
-
-let wasmModule: WasmInterface | null = null;
-
-function loadWasm() {
-  if (loadingStarted) return;
-  loadingStarted = true;
-
-  (globalThis as any).portalToCC = {
-    uuid: function() : string {
-      return "c98b-90ca-8821-09fe";
-    },
-    atob: function(arg: string) : string {
-      return window.atob(arg);
-    },
-  };
-  window.setTimeout(async () => {
-    const mod = await WasmModule();
-    console.log(mod);
-    wasmModule = mod as WasmInterface;
-  }, 100);
-
-}
+import PlayCoordinator from './PlayCoordinator.js';
 
 function App() {
   const [text, setText] = useState("-");
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  let wasmModule: WasmInterface | null = null;
+  const wasmModuleRef = useRef<WasmInterface | null>(null);
 
   useEffect(() => {
-    if (wasmModule) return;
+    if (wasmModuleRef.current) return;
     const timeoutId = globalThis.setTimeout(async () => {
-      wasmModule = await WasmSetup.awaitModuleLoaded();
-      console.log(wasmModule);
+      wasmModuleRef.current = await WasmSetup.awaitModuleLoaded();
     }, 0);
     return () => { globalThis.clearTimeout(timeoutId) };
   }, []);
 
   const onClickBtn = () => {
-    if (!wasmModule) {
+    const wasm = wasmModuleRef.current;
+    if (!wasm) {
       return;
     }
-    const result = wasmModule.AddSquares(3, 4);
+    const result = wasm.AddSquares(3, 4);
     setText(`addsq(3,4) := ${result}`);
 
     if (canvasRef.current === null) {
-      return
+      return;
     }
 
-    const sceneId = wasmModule.miroStartNewScene();
-    console.log(`sceneId = ${sceneId}`);
+    const pc = new PlayCoordinator(wasm);
+    pc.testPlayWithCanvas(canvasRef.current);
+  };
 
-    wasmModule.miroFillCurrentScene(sceneId);
-
-    const ctx = canvasRef.current.getContext("2d") as CanvasRenderingContext2D;
-    console.log(ctx);
-    ctx.fillStyle = "red";
-    ctx.fillRect(5, 5, 50, 70);
-    const setOk = wasmModule.miroApplySceneToCanvas(sceneId, ctx);
-    console.log(setOk);
+  const onClickTestP5Btn = () => {
+    console.log("Test something !!");
   };
 
   return (
     <>
       <div>
-        <button onClick={() => onClickBtn()}>Test WASM method</button>
+      <button onClick={() => onClickBtn()}>Test WASM method</button>
+      <button onClick={() => onClickTestP5Btn()}>Test P5</button>
         <br/>
         <div>{text}</div>
         <br/>

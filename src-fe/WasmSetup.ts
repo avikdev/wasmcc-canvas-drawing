@@ -3,9 +3,11 @@ import WasmModule from './wasm/starter-wasm.js';
 
 interface WasmInterface {
   AddSquares(a: number, b: number): number;
-  miroStartNewScene(): string;
+
+  miroStartNewScene(newSeneId: string): void;
   miroFillCurrentScene(sceneId: string): void;
-  miroApplySceneToCanvas(ceneId: string, context: CanvasRenderingContext2D): boolean;
+  miroLoadCurrentScene(sceneId: string, spec: object): void;
+  miroApplySceneToCanvas(ceneId: string, context: CanvasRenderingContext2D): void;
 }
 
 const WasmSetup = (function WasmSetup() {
